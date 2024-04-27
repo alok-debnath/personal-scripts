@@ -22,6 +22,7 @@ declare -A replacements=(
     ["bind = Control+Super+Alt, E, exec, /usr/bin/microsoft-edge-stable --password-store=gnome --ozone-platform-hint=wayland --gtk-version=4 --ignore-gpu-blocklist --enable-features=TouchpadOverscrollHistoryNavigation"]=""
     ["bind = Super+Shift, W, exec, wps"]=""
     ["bind = Super, C, exec, code --password-store=gnome --enable-features=UseOzonePlatform --ozone-platform=wayland"]=""
+    ["bind = Super, T, exec, foot"]=""
     # ["text_to_replace"]="replacement"
 )
 
