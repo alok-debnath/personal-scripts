@@ -52,16 +52,9 @@ else
     fi
 fi
 
-# Convert WSL path to Windows path if needed
-# if [[ "$TARGET_PATH" == /mnt/* ]]; then
-#     # Convert /mnt/c/... to C:/...
-#     WIN_PATH=$(echo "$TARGET_PATH" | sed 's|/mnt/\([a-zA-Z]\)|\U\1:|' | tr '/' '\\')
-#     URI="file://$WIN_PATH"
-# else
-    # For WSL paths, use vscode-remote
-    ENCODED_PATH=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$TARGET_PATH")
-    URI="vscode-remote://wsl+Ubuntu$ENCODED_PATH"
-# fi
+# Use vscode-remote
+ENCODED_PATH=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$TARGET_PATH")
+URI="vscode-remote://wsl+Ubuntu$ENCODED_PATH"
 
 # Launch Windsurf
 "$WINDSURF_CMD" "--$URI_SCHEME" "$URI"
