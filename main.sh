@@ -87,18 +87,23 @@ display_script_info() {
 
 # Function to execute a script
 execute_script() {
-    script_name=$1
-    script_path="./scripts/$script_name"
+    local script_name="$1"
+    local script_path="$PWD/scripts/$script_name"
+    
+    # Check if the script exists
     if [ -f "$script_path" ]; then
+        echo -e "${GREEN}Verifying $script_name...${RESET}"
         chmod +x "$script_path"
         "$script_path"
     else
-        echo "Script '$script_name' not found."
+        echo -e "${RED}Error: Script '$script_name' not found in $PWD/scripts/${RESET}"
+        return 1
     fi
 }
 
 # Associative array to store script names and their information
 declare -A scripts=(
+    ["wsl-windsurf-launcher.sh"]="Setup Windsurf: Set up the Windsurf launcher (wf command) for opening files/folders"
     ["removeFromKeybinds.sh"]="Remove From Keybinds: This script removes unwanted keybindings from hyprdots keybindings."
     ["zsh.sh"]="ZSH Configuration: This script adds extra user defined aliases and other things to the ZSH config."
     # Add more script names and info here if needed
