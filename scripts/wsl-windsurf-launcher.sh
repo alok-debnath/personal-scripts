@@ -22,6 +22,17 @@ fi
 cat > ~/.local/bin/wf << 'EOF'
 #!/bin/bash
 
+# Detect WSL Distro name
+WSL_DISTRO=$(wsl.exe echo \$WSL_DISTRO_NAME 2>/dev/null | tr -d '\r')
+if [ -z "$WSL_DISTRO" ]; then
+    WSL_DISTRO=$(grep -oP '(?<=/mnt/wsl/instances/)[^/]*' /proc/self/mountinfo 2>/dev/null | head -n1)
+fi
+
+if [ -z "$WSL_DISTRO" ]; then
+    echo "ERROR: Could not detect WSL distro name" >&2
+    exit 1
+fi
+
 WINDSURF_CMD=$(command -v windsurf 2>/dev/null)
 if [ -z "$WINDSURF_CMD" ]; then
     echo "ERROR: windsurf command not found in PATH" >&2
@@ -29,8 +40,9 @@ if [ -z "$WINDSURF_CMD" ]; then
 fi
 
 if [ -z "$1" ]; then
-    TARGET_PATH=$(pwd)
-    URI_SCHEME="folder-uri"
+    # No arguments - open a new window in WSL mode
+    "$WINDSURF_CMD" "--new-window" "--remote" "wsl+${WSL_DISTRO}"
+    exit 0
 else
     TARGET_PATH=$(readlink -f "$1" 2>/dev/null || echo "$1")
     if [ ! -e "$TARGET_PATH" ]; then
@@ -48,7 +60,7 @@ else
 fi
 
 ENCODED_PATH=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$TARGET_PATH")
-URI="vscode-remote://wsl+Ubuntu$ENCODED_PATH"
+URI="vscode-remote://wsl+${WSL_DISTRO}$ENCODED_PATH"
 
 "$WINDSURF_CMD" "--$URI_SCHEME" "$URI"
 EOF
